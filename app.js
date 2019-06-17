@@ -1,8 +1,10 @@
-const Koa = require('koa');
-const app = new Koa();
-const crawler = require('./crawler/index')
+const express = require('express')
+const next = require('./crawler/index')
+const app = express()
+const port = 3000
 
-// 执行抓取
-crawler()
+next()
 
-app.listen(3000)
+app.listen(port, () => { 
+  console.log(`Example app listening on port ${port}!`)
+})

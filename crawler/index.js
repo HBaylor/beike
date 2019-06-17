@@ -1,13 +1,19 @@
-
 const RequestPromise = require('request-promise')
 const Request = require('request')
 const cheerio = require('cheerio')
-const downloadImg = require('./downloadImg')
-const childProcess = require('child_process')
-const worker = childProcess.fork('./downloadImg.js')
-
-
+// const downloadImg = require('./downloadImg')
+// const childProcess = require('child_process')
+// const workerGetImagePath = childProcess.fork('./carwler/imagePath.js')
 const url = 'https://www.ishsh.com'
+
+const child_process = require('child_process')
+const child = child_process.fork(`${__dirname}/two.js`,[], {})
+child.on('message', (m) => {
+  console.log('父进程收到消息', m);
+});
+
+// 使子进程打印: 子进程收到消息 { hello: 'world' }
+child.send({ hello: 'world' });
 
 
 
@@ -66,10 +72,11 @@ function crawler (url) {
       if (res.statusCode == 404 || list.length == 0) {
         stop--
         console.log(stop, 'stop')
-        next()
+        // next()
         return
       }
       console.log(list)
+      // workerGetImagePath.send('123')
       next()
       // list && list.forEach(item => {
       //   getImagePath(item)
@@ -82,8 +89,8 @@ function crawler (url) {
 function next() {
   if (stop <= 0) {
     stop = 2
-    type++
     page = 1
+    type++
   } else page++
 
   if (type >= typeList.length) return
@@ -91,6 +98,4 @@ function next() {
   crawler(`${url}/${typeList[type]}/page/${page}`)
 }
 
-
 module.exports = next
-
